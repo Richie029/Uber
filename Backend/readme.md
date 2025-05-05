@@ -200,3 +200,93 @@ Request body must be a JSON object with the following properties:
   }
 }
 ```
+
+## /captains/login
+
+**Method:** POST
+
+### Description
+Logs in an existing captain by verifying credentials and returning an authentication token along with captain information.
+
+### Required Request Data
+Request body must be a JSON object with:
+- **email**: A valid email address.
+- **password**: A string with at least 8 characters.
+
+**Example Request Body:**
+```json
+{
+  "email": "jane.smith@example.com",
+  "password": "SecurePass123"
+}
+```
+
+### Response
+- **200 OK:** Captain successfully logged in.
+- **400 Bad Request:** Validation errors or invalid credentials.
+
+**Example Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1...",
+  "captain": {
+    "_id": "5f8d0d55b54764421b7156c7",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com"
+    // ...other captain details...
+  }
+}
+```
+
+## /captains/profile
+
+**Method:** GET
+
+### Description
+Retrieves the authenticated captain's profile information. Requires a valid authentication token.
+
+### Headers
+- Authorization: Bearer {token} (or use cookies)
+
+### Response
+- **200 OK:** Captain profile retrieved successfully.
+- **401 Unauthorized:** Authentication token missing or invalid.
+
+**Example Response:**
+```json
+{
+  "captain": {
+    "_id": "5f8d0d55b54764421b7156c7",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com"
+    // ...other captain details...
+  }
+}
+```
+
+## /captains/logout
+
+**Method:** GET
+
+### Description
+Logs out the authenticated captain by clearing the authentication cookie and blacklisting the token.
+
+### Headers
+- Authorization: Bearer {token} (or use cookies)
+
+### Response
+- **200 OK:** Logout successful.
+- **401 Unauthorized:** Authentication token missing or invalid.
+
+**Example Response:**
+```json
+{
+  "message": "Logged out successfully"
+}
+```
