@@ -142,3 +142,61 @@ Logs out the authenticated user. It clears the authentication cookie and blackli
 ### Status Codes
 - **200 OK:** Logout successful.
 - **401 Unauthorized:** Authentication token missing or invalid.
+
+## /captains/register
+
+**Method:** POST
+
+### Description
+Registers a new captain. Validates request data, creates a new captain, and returns an authentication token along with captain information.
+
+### Required Request Data
+Request body must be a JSON object with the following properties:
+- **fullname**: An object containing:
+  - `firstname` (string, minimum 3 characters)
+  - `lastname` (string, optional; if provided, minimum 3 characters)
+- **email**: A valid email address.
+- **password**: A string with at least 8 characters.
+- **vehicle**: An object containing:
+  - `color` (string, minimum 3 characters)
+  - `plate` (string, minimum 3 characters)
+  - `capacity` (number, min 1)
+  - `type` (string, one of: "car", "motorcycle", "auto")
+
+**Example Request Body:**
+```json
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane.smith@example.com",
+  "password": "SecurePass123",
+  "vehicle": {
+    "color": "Red",
+    "plate": "XYZ123",
+    "capacity": 4,
+    "type": "car"
+  }
+}
+```
+
+### Response
+- **201 Created:** Captain successfully registered.
+- **400 Bad Request:** Validation errors or other errors.
+
+**Example Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1...",
+  "captain": {
+    "_id": "5f8d0d55b54764421b7156c7",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com"
+    // ...other captain details...
+  }
+}
+```
