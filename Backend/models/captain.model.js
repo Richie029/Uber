@@ -48,7 +48,7 @@ const captainSchema = mongoose.Schema({
             type:String,
             required:true,
             minlength:[3,'Plate must be at least 3 characters long'],
-            unique:true,
+            
         },
         type:{
             type:String,

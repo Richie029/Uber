@@ -1,38 +1,69 @@
 import React,{useState} from 'react';
-import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link ,useNavigate} from 'react-router-dom';
+import { CaptainDataContext } from '../context/CaptainContext';
+import axios from 'axios';
 
 const CaptainSignUp= () => {
-
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
   
     const [userData, setUserData] = useState({});
+
+    const { captain,setCaptainData } = React.useContext(CaptainDataContext);
+
+    const [vehicleColor, setVehicleColor] = useState("");
+    const [vehiclePlate, setVehiclePlate] = useState("");
+    const [vehicleCapacity, setVehicleCapacity] = useState("");
+    const [vehicleType, setVehicleType] = useState("");
   
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
       e.preventDefault();
-      const user = {
+      const captainData = {
         fullname:{
           firstname: firstName,
           lastname: lastName,
         },
         email:email,
-        password:password 
+        password:password,
+        vehicle: {
+          color: vehicleColor,
+          plate: vehiclePlate,
+          capacity: vehicleCapacity,
+          type: vehicleType,
+        },
       };
-      setUserData(user);
+      console.log(captainData);
+
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, captainData);
+
+      if(response.status === 201){
+        const data = response.data;
+        setCaptainData(data.captain);
+        localStorage.setItem('token', data.token);
+        navigate("/captain-home");
+      }
+
+      
       setFirstName("");
       setLastName("");
       setEmail("");
       setPassword("");
+      setVehicleColor("");
+      setVehiclePlate("");
+      setVehicleCapacity("");
+      setVehicleType("");
     };
    
   return (
     <div className="p-7 bg-white h-screen w-screen text-black flex flex-col justify-between">
       <div>
         <img
-          className=" w-30 -ml-5 -mt-5 mb-10 "
-          src="./public/logo.png"
+          className=" w-22 -ml-1 -mt-3 mb-5 "
+          src="https://www.svgrepo.com/show/505031/uber-driver.svg"
           alt=""
         />
         <form onSubmit={(e) => submitHandler(e)}>
@@ -72,8 +103,51 @@ const CaptainSignUp= () => {
             placeholder="********"
             className="bg-[#eeeeee] rounded text-base placeholder:text-sm w-full px-4 py-2 mb-6 "
           />
+          <h3 className="mb-2 text-lg font-medium">Vehicle Information</h3>
+          <div className=" flex gap-4 mb-6">
+            <input
+              required
+              value={vehicleColor}
+              onChange={(e) => setVehicleColor(e.target.value)}
+              type="text"
+              placeholder="Vehicle Color"
+              className="bg-[#eeeeee] rounded text-base placeholder:text-sm w-full px-4 py-2 mb-4"
+            />
+            <input
+              required
+              value={vehiclePlate}
+              onChange={(e) => setVehiclePlate(e.target.value)}
+              type="text"
+              placeholder="Vehicle Plate Number"
+              className="bg-[#eeeeee] rounded text-base placeholder:text-sm w-full px-4 py-2 mb-4"
+            />
+          </div>
+          <div className=" flex gap-4 mb-6">
+            <input
+              type="number"
+              required
+              value={vehicleCapacity}
+              onChange={(e) => setVehicleCapacity(Number(e.target.value))}
+              min="1"
+              className="bg-[#eeeeee] rounded text-base placeholder:text-sm w-full px-4 py-2 mb-4"
+              placeholder="Enter vehicle capacity"
+            />
+            <select
+              required
+              value={vehicleType}
+              onChange={(e) => setVehicleType(e.target.value)}
+              className="bg-[#eeeeee] rounded text-base placeholder:text-sm w-full px-4 py-2 mb-4"
+            >
+              <option value="" disabled>
+                Select Vehicle Type
+              </option>
+              <option value="car">car</option>
+              <option value="auto">auto</option>
+              <option value="motorcycle">motorcycle</option>
+            </select>
+          </div>
           <button className="bg-[#111] text-white font-semibold rounded text-lg placeholder:text-base w-full px-4 py-2 mb-3">
-            Create account
+            Create Captain account
           </button>
         </form>
         <p className="text-center">
